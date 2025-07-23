@@ -336,8 +336,8 @@ def compute_flux_F2(prims_plus,prims_minus,t,p1,p2,K):
 ########################################################################################################
 def T1_Euler(t,cons,step_sizes,Ngz,K,p1,p2):
 
-    p1 = 0.5
-    p2 = 0.5
+    # p1 = 0.5
+    # p2 = 0.5
 
     """ 
     NB: This currently assumes a uniformly spaced grid in x and y!
@@ -431,17 +431,7 @@ def T1_Euler(t,cons,step_sizes,Ngz,K,p1,p2):
                                 + S2_source[Ngz:-Ngz,Ngz:-Ngz]
 
 
-    # fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-    # ax.plot_surface(x_cell_mesh[2:-2,2:-2], y_cell_mesh[2:-2,2:-2], mu[2:-2,2:-2], linewidth=0, antialiased=False, cmap=cm.coolwarm)
-    # # ax.plot_surface(x_cell_mesh[2:-2,2:-2], y_cell_mesh[2:-2,2:-2], F2[1,Ngz:-Ngz,Ngz:-Ngz], linewidth=0, antialiased=False, cmap=cm.coolwarm)
-    # # # CS = ax.contour(r.meshes[0], r.meshes[1], v_norm)  # Plot contour curves
-    # # # # plt.colorbar()
-    # # # plt.clabel(CS, inline=True, fontsize=10)
-    # # plt.tight_layout()
-    # plt.show()
-    
-
-    
+        
     dtU = np.array([dttau,dtS1,dtS2])
 
     
@@ -509,20 +499,14 @@ def evolve_system(yinit,t0,tend,spatial_steps,rk,rhs,BCs,K,Nghosts):
     i = 0
 
     dx, dy = spatial_steps
-    CFL = 0.4
+    CFL = 0.2
     while t0<tend:
         
         i += 1
 
         dt = CFL*np.min([dx/CS_x,dy/CS_y])
-        # dt = CFL*np.min([dx,dy])/(np.max([CS_x,CS_y]))
-        # dt = CFL*dx
-        # print(dt)
         if dt > 0.4*dx:
-            # print("Here!")
             dt = 0.4*dx
-        # else:
-        #      print("not here")
 
         if t0 + dt > tend:
              dt = tend-t0
@@ -584,17 +568,20 @@ x_cell_mesh, y_cell_mesh = np.meshgrid(coordinates_x,coordinates_y,indexing='ij'
 # Sound speed and Kasner exponents
 
 K = args.K 
-p1 = 1.0
-p2 = 1.0
+p1 = 0.2
+p2 = 0.2
 
 # Set Primitive Variables
 
 mu = 0*x_cell_mesh + 1.0 
 u1 = 0.4*np.sin(x_cell_mesh) + 0.4*np.sin(y_cell_mesh)
-u2 = 0.5*np.sin(y_cell_mesh)
+u2 = 0.5*np.sin(y_cell_mesh) + 0.2*np.cos(x_cell_mesh)
 
 Gamma2 = 1/(1 - u1**2 - u2**2) # Gamma2 := Gamma^{2}
 
+
+# print(u1**2 + u2**2)
+# breaks
 
 # Define Conserved Variables:
 
@@ -699,7 +686,7 @@ if display_output is True:
     for i in range(np.shape(t)[0]):
 
     
-        CS = ax.plot_surface(x_cell_mesh,y_cell_mesh,u1[i,:,:], cmap=cm.coolwarm)
+        CS = ax.plot_surface(x_cell_mesh,y_cell_mesh,u1[i,:,:]**2 + u2[i,:,:]**2, cmap=cm.coolwarm)
         # plt.colorbar()
         plt.draw()
         plt.title(t_soln[i])
