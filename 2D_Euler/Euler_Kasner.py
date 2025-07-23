@@ -541,11 +541,6 @@ dx = (interval_x[1]-interval_x[0])/Npoints_x
 dy = (interval_y[1]-interval_y[0])/Npoints_y
 spatial_steps = np.array([dx,dy])
 
-if dx != dy:
-     print("Must have uniform spacing in x and y directions!")
-     print("Closing simulation...")
-     sys.exit()
-
 
 # Create cell arrays
 x_start = interval_x[0] + (0.5 - Nghosts)*dx

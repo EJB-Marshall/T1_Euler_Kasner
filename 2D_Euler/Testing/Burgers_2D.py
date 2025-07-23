@@ -312,11 +312,6 @@ dx = (interval_x[1]-interval_x[0])/Npoints_x
 dy = (interval_y[1]-interval_y[0])/Npoints_y
 spatial_steps = np.array([dx,dy])
 
-if dx != dy:
-     print("Must have uniform spacing in x and y directions!")
-     print("Closing simulation...")
-     sys.exit()
-
 
 # Create cell arrays
 x_start = interval_x[0] + (0.5 - Nghosts)*dx
@@ -366,11 +361,6 @@ rhs = lambda t,y: Burgers(t,y,spatial_steps,Nghosts)
 t_soln, y_soln = evolve_system(y0,t_init,t_final,spatial_steps,rk4,rhs,periodic_BC,Nghosts)
 t = np.array(t_soln)
 y = np.array(y_soln)
-
-# [t,y] = mixed_rk4(rhs, 20, 10, y0, 0.5*(dx),dx,spherical_symmetry_BC)
-
-
-# [t,y] = rk4_old(rhs, np.logspace(np.log10(1),-15,600), y0, 0.5*(dx),spherical_symmetry_BC)
 
 
 
